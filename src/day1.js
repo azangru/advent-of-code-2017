@@ -1,3 +1,5 @@
+// full description of the problems: https://adventofcode.com/2017/day/1
+
 import puzzleInput from '../data/day1';
 
 /* PART 1 */

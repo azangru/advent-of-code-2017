@@ -73,4 +73,4 @@ console.log('solution to the first part of the puzzle is:', calculateNumberOfShu
 /* PART 2 */
 
 // find the loop size (the distance from the last encountered number configuration)
-console.log('solution to the first part of the puzzle is:', calculateNumberOfShuffles(prepareInput(puzzleInput)).loopSize);
+console.log('solution to the second part of the puzzle is:', calculateNumberOfShuffles(prepareInput(puzzleInput)).loopSize);

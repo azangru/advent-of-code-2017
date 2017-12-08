@@ -12,7 +12,7 @@ class Node {
 
   constructor({name, value}) {
     this.name = name;
-    this.value = value;
+    this.value = parseInt(value, 10);
 
     this.children = [];
   }
@@ -67,27 +67,10 @@ export function buildTree(input) {
 
 export function findBottomNode(tree) {
   return tree.filter(node => {
-    // console.log('node', node, 'parent', node.parent);
     return !node.parent
   })[0];
 }
 
-
-// let input = `pbga (66)
-// xhth (57)
-// ebii (61)
-// havc (66)
-// ktlj (57)
-// fwft (72) -> ktlj, cntj, xhth
-// qoyq (66)
-// padx (45) -> pbga, havc, qoyq
-// tknk (41) -> ugml, padx, fwft
-// jptl (61)
-// ugml (68) -> gyxo, ebii, jptl
-// gyxo (61)
-// cntj (57)`;
-//
-// findBottomNode(buildTree(input));
 
 console.log('Solution to the first part of the puzzle is:', findBottomNode(buildTree(puzzleInput)).name);
 
@@ -99,19 +82,23 @@ function partition(nodes) {
   // convention: left part has an odd node; right part has nodes with equal values
   let left = [];
   let right = [];
-  let values = nodes.map(node => node.value);
-  console.log('values', values);
+  let values = nodes.map(node => sumValues(node));
 
-  nodes.forEach(node => {
-    let timesOccurring = values.filter(value => value === node.value).length;
+  values.forEach((currentValue, index) => {
+    let timesOccurring = values.filter(value => value === currentValue).length;
     if (timesOccurring === 1) {
-      left.push(node);
+      left.push(nodes[index]);
     } else {
-      right.push(node);
+      right.push(nodes[index]);
     }
-  });
+  })
 
   return [left, right];
+}
+
+function getUnbalancedChild(node) {
+  let [left, right] = partition(node.children);
+  return left[0] || null;
 }
 
 export function findUnbalancedNode(tree) {
@@ -120,9 +107,33 @@ export function findUnbalancedNode(tree) {
   let currentNode = bottomNode;
 
   while(currentNode.hasChildren()) {
-    console.log('currentNode', currentNode);
-    let [left, right] = partition(currentNode.children);
-    currentNode = left[0];
+    let unbalancedNode = getUnbalancedChild(currentNode);
+    if (unbalancedNode) {
+      currentNode = unbalancedNode;
+    } else {
+      break;
+    }
   }
 
+  return currentNode;
 }
+
+function sumValues(node) {
+  if (!node.hasChildren()) {
+    return node.value;
+  } else {
+    return node.value + node.children.reduce((sum, child) => sum + sumValues(child), 0);
+  }
+}
+
+function solvePart2() {
+  let unbalancedNode = findUnbalancedNode(buildTree(puzzleInput));
+  let parent = unbalancedNode.parent;
+  let siblingNode = parent.children.filter(child => child !== unbalancedNode)[0];
+  let unbalancedNodeSumOfValues = sumValues(unbalancedNode);
+  let balancedNodeSumOfValues = sumValues(siblingNode);
+  let balanceDifference = unbalancedNodeSumOfValues - balancedNodeSumOfValues;
+  return unbalancedNode.value - balanceDifference;
+}
+
+console.log('Solution to the first part of the puzzle is:', solvePart2());

@@ -27,14 +27,3 @@ describe('buildTree', () => {
   })
 
 });
-
-describe('findUnbalancedNode', () => {
-
-  test('finds unbalanced node in the tree', () => {
-    // console.log(buildTree(testInput));
-    console.log(findUnbalancedNode(buildTree(testInput)));
-
-    expect(true).toBe(true);
-  });
-
-})
